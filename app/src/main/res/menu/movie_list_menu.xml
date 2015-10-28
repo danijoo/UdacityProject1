@@ -1,0 +1,6 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
+    <item android:id="@+id/action_sort_popularity" android:title="Sort by popularity" app:showAsAction="never" />
+    <item android:id="@+id/action_sort_rating" android:title="Sort by av. rating" app:showAsAction="never" />
+</menu>
