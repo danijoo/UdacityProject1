@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignTop="@+id/movie_details_ivPoster"
-            android:layout_centerHorizontal="true" />
+            android:layout_alignParentEnd="true" />
 
         <TextView
             android:textAppearance="?android:attr/textAppearanceLarge"
@@ -42,7 +42,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/movie_details_tvReleaseDate"
-            android:layout_alignEnd="@+id/movie_details_tvReleaseDate" />
+            android:layout_alignStart="@+id/movie_details_tvReleaseDate"
+            android:layout_marginTop="39dp" />
 
         <TextView
             android:id="@+id/movie_details_tvOverview"

@@ -1,6 +1,7 @@
 package net.headlezz.udacityproject1;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -36,8 +37,8 @@ public class MovieListFragment extends Fragment {
     /**
      * The number of columns our movie grid shows
      */
-    private static final int NUM_COLUMNS = 3; // TODO adjust colum count for landscape
-
+    private static final int NUM_COLUMNS_PORTRAIT = 3;
+    private static final int NUM_COLUMNS_LAND = 5;
     /**
      * The currently selected sorting order of the list
      * @see TMDBApi
@@ -68,7 +69,20 @@ public class MovieListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mMovieGridView.setLayoutManager(new GridLayoutManager(getActivity(), NUM_COLUMNS));
+        mMovieGridView.setLayoutManager(new GridLayoutManager(getActivity(), getNumColumns()));
+    }
+
+    /**
+     * @return the number of columns the app should show
+     * The result depends on screen orientation
+     */
+    private int getNumColumns() {
+        int orientation = getActivity().getResources().getConfiguration().orientation;
+        if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+            return NUM_COLUMNS_LAND;
+        else
+            return NUM_COLUMNS_PORTRAIT;
+
     }
 
     @Override

@@ -20,7 +20,7 @@ import retrofit.http.Query;
 public class TMDBApi {
 
     private static final String BASE_URL = "http://api.themoviedb.org/3/";
-    private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185"; // TODO select size depending on device screen ratios
+    private static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
 
     /**
      * These are the possible sorting orders
