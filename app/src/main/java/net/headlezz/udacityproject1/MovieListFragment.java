@@ -1,5 +1,6 @@
 package net.headlezz.udacityproject1;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,13 +29,14 @@ import retrofit.Call;
 public class MovieListFragment extends Fragment {
 
     // TODO fix restore
+    // TODO show progressbar while loading
 
     public static final String TAG = MovieListFragment.class.getSimpleName();
 
     /**
      * The number of columns our movie grid shows
      */
-    private static final int NUM_COLUMNS = 2;
+    private static final int NUM_COLUMNS = 3; // TODO adjust colum count for landscape
 
     /**
      * The currently selected sorting order of the list
@@ -120,7 +122,7 @@ public class MovieListFragment extends Fragment {
     }
 
     private void setListToGrid(List<Movie> movies) {
-        mMovieGridView.setAdapter(new MovieListAdapter(getActivity(), movies));
+        mMovieGridView.setAdapter(new MovieListAdapter((MovieNavigation) getActivity(), movies));
     }
 
     /**
@@ -137,5 +139,12 @@ public class MovieListFragment extends Fragment {
     public void onStop() {
         super.onStop();
         stopLoadingMovies();
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(!(context instanceof MovieNavigation))
+            throw new RuntimeException("Activity must implement " + MovieNavigation.class.getSimpleName());
     }
 }
