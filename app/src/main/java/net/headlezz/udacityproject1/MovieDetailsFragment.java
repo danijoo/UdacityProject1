@@ -20,6 +20,7 @@ import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 public class MovieDetailsFragment extends Fragment {
 
     // TODO make me pretty
+    // TODO not scrolling to the end
 
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
     public static final String BUNDLE_ARG_MOVIE = "movie";
@@ -69,7 +70,7 @@ public class MovieDetailsFragment extends Fragment {
         tvTitle.setText(mMovie.getTitle());
         tvOverview.setText(mMovie.getOverview());
         String formatedDate = DateUtils.formatDateTime(tvReleaseDate.getContext(), mMovie.getReleaseDate(), DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_NUMERIC_DATE | DateUtils.FORMAT_SHOW_YEAR);
-        tvReleaseDate.setText(formatedDate);
-        tvRating.setText(String.valueOf(mMovie.getAvRating()));
+        tvReleaseDate.setText(getString(R.string.movie_release_date, formatedDate));
+        tvRating.setText(getString(R.string.movie_rating, mMovie.getAvRating()));
     }
 }
