@@ -16,19 +16,18 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import net.headlezz.udacityproject1.tmdbapi.Movie;
 import net.headlezz.udacityproject1.tmdbapi.MovieList;
-import net.headlezz.udacityproject1.tmdbapi.MovieListCallback;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
-import java.util.List;
-
 import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * A fragment showing a list of movies
  */
-public class MovieListFragment extends Fragment {
+public class MovieListFragment extends Fragment implements Callback<MovieList> {
 
     public static final String TAG = MovieListFragment.class.getSimpleName();
 
@@ -121,29 +120,29 @@ public class MovieListFragment extends Fragment {
      * mSortingOrder will be used to determine the sorting
      */
     private void loadMovieList() {
-        mProgressBar.setVisibility(View.VISIBLE);
         stopLoadingMovies(); // stop any running query before starting a new one
-        MovieListCallback cb = new MovieListCallback() {
-            @Override
-            protected void onResponse(MovieList movies) {
-                setListToGrid(movies.getList());
-                mProgressBar.setVisibility(View.GONE);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-                Log.d(TAG, t.getClass().getSimpleName() + " " + t.getMessage());
-                mProgressBar.setVisibility(View.GONE);
-                if(!t.getMessage().equals("Canceled") && getActivity() != null)
-                    Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        };
+        mProgressBar.setVisibility(View.VISIBLE);
         mMovieListCall = TMDBApi.discoverMovies(mSortingOrder, getString(R.string.api_key));
-        mMovieListCall.enqueue(cb);
+        mMovieListCall.enqueue(this);
     }
 
-    private void setListToGrid(List<Movie> movies) {
-        mMovieGridView.setAdapter(new MovieListAdapter((MovieNavigation) getActivity(), movies));
+    @Override
+    public void onResponse(Response<MovieList> response, Retrofit retrofit) {
+        if(response.isSuccess())
+            setListToGrid(response.body());
+        mProgressBar.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void onFailure(Throwable t) {
+        Log.d(TAG, t.getClass().getSimpleName() + " " + t.getMessage());
+        mProgressBar.setVisibility(View.GONE);
+        if(!t.getMessage().equals("Canceled") && getActivity() != null)
+            Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
+    }
+
+    private void setListToGrid(MovieList movieList) {
+        mMovieGridView.setAdapter(new MovieListAdapter((MovieNavigation) getActivity(), movieList));
     }
 
     /**

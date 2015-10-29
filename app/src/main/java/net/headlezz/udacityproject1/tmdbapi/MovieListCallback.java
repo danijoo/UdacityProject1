@@ -10,8 +10,8 @@ public abstract class MovieListCallback implements Callback<MovieList> {
      public void onResponse(Response<MovieList> response, Retrofit retrofit) {
         if(response.isSuccess())
             onResponse(response.body());
-        else
-            onFailure(new MovieDownloadException("Something went wrong" + response.code())); // TODO make this better
+        else // we dont want want res
+            onFailure(new MovieDownloadException("Something went wrong" + response.code()));
     }
 
     protected abstract void onResponse(MovieList movies);

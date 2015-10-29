@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import net.headlezz.udacityproject1.tmdbapi.Movie;
+import net.headlezz.udacityproject1.tmdbapi.MovieList;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
 import java.util.List;
@@ -16,9 +17,9 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
     MovieNavigation mMovieNavigation;
     List<Movie> mMovies;
 
-    public MovieListAdapter(MovieNavigation mn, List<Movie> movies) {
+    public MovieListAdapter(MovieNavigation mn, MovieList movieList) {
         mMovieNavigation = mn;
-        mMovies = movies;
+        mMovies = movieList.getList();
     }
 
     @Override
