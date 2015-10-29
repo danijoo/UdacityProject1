@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import net.headlezz.udacityproject1.tmdbapi.Movie;
@@ -29,9 +30,6 @@ import retrofit.Call;
  */
 public class MovieListFragment extends Fragment {
 
-    // TODO fix restore
-    // TODO show progressbar while loading
-
     public static final String TAG = MovieListFragment.class.getSimpleName();
 
     /**
@@ -46,6 +44,7 @@ public class MovieListFragment extends Fragment {
     private int mSortingOrder = TMDBApi.SORT_ORDER_MOST_POPULAR;
 
     RecyclerView mMovieGridView;
+    ProgressBar mProgressBar;
 
     /**
      * Holding a reference to running api calls. This makes it possible to cancel them if
@@ -63,6 +62,7 @@ public class MovieListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
         mMovieGridView = (RecyclerView) view.findViewById(R.id.movie_list_grid);
+        mProgressBar = (ProgressBar) view.findViewById(R.id.movie_list_progressBar);
         return view;
     }
 
@@ -70,6 +70,9 @@ public class MovieListFragment extends Fragment {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMovieGridView.setLayoutManager(new GridLayoutManager(getActivity(), getNumColumns()));
+
+        if(savedInstanceState != null)
+            mSortingOrder = savedInstanceState.getInt("sort_order");
     }
 
     /**
@@ -118,17 +121,21 @@ public class MovieListFragment extends Fragment {
      * mSortingOrder will be used to determine the sorting
      */
     private void loadMovieList() {
+        mProgressBar.setVisibility(View.VISIBLE);
         stopLoadingMovies(); // stop any running query before starting a new one
         MovieListCallback cb = new MovieListCallback() {
             @Override
             protected void onResponse(MovieList movies) {
                 setListToGrid(movies.getList());
+                mProgressBar.setVisibility(View.GONE);
             }
 
             @Override
             public void onFailure(Throwable t) {
-                Log.d(TAG, t.getMessage());
-                Toast.makeText(getActivity(), "Somethig went wrong", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, t.getClass().getSimpleName() + " " + t.getMessage());
+                mProgressBar.setVisibility(View.GONE);
+                if(!t.getMessage().equals("Canceled") && getActivity() != null)
+                    Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
         mMovieListCall = TMDBApi.discoverMovies(mSortingOrder, getString(R.string.api_key));
@@ -160,5 +167,11 @@ public class MovieListFragment extends Fragment {
         super.onAttach(context);
         if(!(context instanceof MovieNavigation))
             throw new RuntimeException("Activity must implement " + MovieNavigation.class.getSimpleName());
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt("sort_order", mSortingOrder);
+        super.onSaveInstanceState(outState);
     }
 }

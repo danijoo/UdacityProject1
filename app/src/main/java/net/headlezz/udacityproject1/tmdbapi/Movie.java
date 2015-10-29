@@ -3,6 +3,10 @@ package net.headlezz.udacityproject1.tmdbapi;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
+import java.util.Date;
+
 /**
  * Data object to represent a single movie
  * Only required data from the api is stored to save memory
@@ -13,10 +17,17 @@ public class Movie implements Parcelable {
     public Movie() {}
 
     String title;
+
+    @SerializedName("poster_path")
     String posterPath;
+
     String overview;
+
+    @SerializedName("vote_average")
     double avRating;
-    long releaseDate;
+
+    @SerializedName("release_date")
+    Date releaseDate;
 
     public String getTitle() {
         return title;
@@ -34,7 +45,7 @@ public class Movie implements Parcelable {
         return avRating;
     }
 
-    public long getReleaseDate() {
+    public Date getReleaseDate() {
         return releaseDate;
     }
 
@@ -51,7 +62,7 @@ public class Movie implements Parcelable {
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeDouble(avRating);
-        dest.writeLong(releaseDate);
+        dest.writeLong(releaseDate.getTime());
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -69,7 +80,7 @@ public class Movie implements Parcelable {
         posterPath = src.readString();
         overview = src.readString();
         avRating = src.readDouble();
-        releaseDate = src.readLong();
+        releaseDate = new Date(src.readLong());
     }
 
 
