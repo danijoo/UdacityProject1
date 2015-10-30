@@ -19,6 +19,8 @@ import android.widget.Toast;
 import net.headlezz.udacityproject1.tmdbapi.MovieList;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -44,8 +46,8 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
 
     private MovieList mMovieList;
 
-    RecyclerView mMovieGridView;
-    ProgressBar mProgressBar;
+    @Bind(R.id.movie_list_grid) RecyclerView mMovieGridView;
+    @Bind(R.id.movie_list_progressBar) ProgressBar mProgressBar;
 
     /**
      * Holding a reference to running api calls. This makes it possible to cancel them if
@@ -62,8 +64,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_list, container, false);
-        mMovieGridView = (RecyclerView) view.findViewById(R.id.movie_list_grid);
-        mProgressBar = (ProgressBar) view.findViewById(R.id.movie_list_progressBar);
+        ButterKnife.bind(this, view);
         return view;
     }
 

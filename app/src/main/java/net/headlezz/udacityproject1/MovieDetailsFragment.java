@@ -14,6 +14,9 @@ import android.widget.TextView;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
+
 /**
  * Fragment to show the details of a movie
  */
@@ -22,11 +25,11 @@ public class MovieDetailsFragment extends Fragment {
     public static final String TAG = MovieDetailsFragment.class.getSimpleName();
     public static final String BUNDLE_ARG_MOVIE = "movie";
 
-    ImageView ivPoster;
-    TextView tvTitle;
-    TextView tvOverview;
-    TextView tvReleaseDate;
-    TextView tvRating;
+    @Bind(R.id.movie_details_ivPoster) ImageView ivPoster;
+    @Bind(R.id.movie_details_tvTitle) TextView tvTitle;
+    @Bind(R.id.movie_details_tvOverview) TextView tvOverview;
+    @Bind(R.id.movie_details_tvReleaseDate) TextView tvReleaseDate;
+    @Bind(R.id.movie_details_tvRating) TextView tvRating;
 
     Movie mMovie;
 
@@ -52,11 +55,7 @@ public class MovieDetailsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_movie_details, container, false);
-        ivPoster = (ImageView) view.findViewById(R.id.movie_details_ivPoster);
-        tvTitle = (TextView) view.findViewById(R.id.movie_details_tvTitle);
-        tvOverview = (TextView) view.findViewById(R.id.movie_details_tvOverview);
-        tvReleaseDate = (TextView) view.findViewById(R.id.movie_details_tvReleaseDate);
-        tvRating = (TextView) view.findViewById(R.id.movie_details_tvRating);
+        ButterKnife.bind(this, view);
         return view;
     }
 
