@@ -1,5 +1,6 @@
 package net.headlezz.udacityproject1;
 
+import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import net.headlezz.udacityproject1.favorites.FavoriteProviderHelper;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
+import net.headlezz.udacityproject1.tmdbapi.ReviewList;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 import net.headlezz.udacityproject1.tmdbapi.Video;
 import net.headlezz.udacityproject1.tmdbapi.VideoList;
@@ -29,6 +31,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import retrofit.Call;
 import retrofit.Callback;
 import retrofit.Response;
@@ -132,6 +135,32 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     }
 
     // TODO high res image for video link
+
+    @OnClick(R.id.movie_details_btReviews)
+    public void onReviewButtonClick(View view) {
+        // TODO progressdialogs are bad because of rotation
+        final ProgressDialog dialog = new ProgressDialog(getContext());
+        dialog.setIndeterminate(true);
+        dialog.show();
+        TMDBApi.getReviewsForMovie(mMovie, getString(R.string.api_key)).enqueue(new Callback<ReviewList>() {
+            @Override
+            public void onResponse(Response<ReviewList> response, Retrofit retrofit) {
+                dialog.dismiss();
+                if(response.isSuccess()) {
+                    ReviewDialogFragment frag = ReviewDialogFragment.newInstance(response.body());
+                    frag.show(getChildFragmentManager(), ReviewDialogFragment.TAG);
+                } else {
+                    Log.e(TAG, "Query not successful.");
+                }
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                dialog.dismiss();
+                Log.e(TAG, "something went wrong: " + t.getMessage());
+            }
+        });
+    }
 
     /**
      * shows a list of links to youtube videos for the selected movie

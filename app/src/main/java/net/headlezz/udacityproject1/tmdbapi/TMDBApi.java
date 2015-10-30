@@ -41,6 +41,7 @@ public class TMDBApi {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(MovieList.class, new MovieListDeserializer())
                 .registerTypeAdapter(VideoList.class, new VideoListDeserializer())
+                .registerTypeAdapter(ReviewList.class, new ReviewListDeserializer())
                 .create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -69,6 +70,10 @@ public class TMDBApi {
         return apiService.getVideosForMovie(movie.getId(), apiKey);
     }
 
+    public static Call<ReviewList> getReviewsForMovie(Movie movie, String apiKey) {
+        return apiService.getReviewsForMovie(movie.getId(), apiKey);
+    }
+
     /**
      * Api interface for retrofit
      */
@@ -80,6 +85,10 @@ public class TMDBApi {
         @Headers("Accept: application/json")
         @GET("movie/{id}/videos")
         Call<VideoList> getVideosForMovie(@Path("id") long id, @Query("api_key") String apiKey);
+
+        @Headers("Accept: application/json")
+        @GET("movie/{id}/reviews")
+        Call<ReviewList> getReviewsForMovie(@Path("id") long id, @Query("api_key") String apiKey);
     }
 
 }
