@@ -42,6 +42,8 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      */
     private int mSortingOrder = TMDBApi.SORT_ORDER_MOST_POPULAR;
 
+    private MovieList mMovieList;
+
     RecyclerView mMovieGridView;
     ProgressBar mProgressBar;
 
@@ -70,8 +72,11 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
         super.onActivityCreated(savedInstanceState);
         mMovieGridView.setLayoutManager(new GridLayoutManager(getActivity(), getNumColumns()));
 
-        if(savedInstanceState != null)
+        if(savedInstanceState != null) {
             mSortingOrder = savedInstanceState.getInt("sort_order");
+            if(savedInstanceState.containsKey("movielist"))
+                mMovieList = savedInstanceState.getParcelable("movielist");
+        }
     }
 
     /**
@@ -90,7 +95,18 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     @Override
     public void onStart() {
         super.onStart();
-        loadMovieList();
+        initMovieList();
+    }
+
+    /**
+     * sets the adapter from the restored movie list if the instance state is restored
+     * starts the download of the new movie list if no restored one is present
+     */
+    private void initMovieList() {
+        if(mMovieList == null)
+            loadMovieList();
+        else
+            mMovieGridView.setAdapter(new MovieListAdapter( (MovieNavigation) getActivity(), mMovieList));
     }
 
     @Override
@@ -128,8 +144,10 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
 
     @Override
     public void onResponse(Response<MovieList> response, Retrofit retrofit) {
-        if(response.isSuccess())
-            setListToGrid(response.body());
+        if(response.isSuccess()) {
+            mMovieList = response.body();
+            setListToGrid(mMovieList);
+        }
         mProgressBar.setVisibility(View.GONE);
     }
 
@@ -171,6 +189,8 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("sort_order", mSortingOrder);
+        if(mMovieList != null)
+            outState.putParcelable("movielist", mMovieList);
         super.onSaveInstanceState(outState);
     }
 }
