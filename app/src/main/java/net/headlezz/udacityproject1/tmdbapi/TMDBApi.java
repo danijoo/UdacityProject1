@@ -11,6 +11,7 @@ import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
 import retrofit.http.GET;
 import retrofit.http.Headers;
+import retrofit.http.Path;
 import retrofit.http.Query;
 
 /**
@@ -37,6 +38,7 @@ public class TMDBApi {
     private static TMDBApiService buildApiService() {
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(MovieList.class, new MovieListDeserializer())
+                .registerTypeAdapter(VideoList.class, new VideoListDeserializer())
                 .create();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(BASE_URL)
@@ -61,6 +63,10 @@ public class TMDBApi {
         return apiService.discoverMovies(sort, apiKey);
     }
 
+    public static Call<VideoList> getVideosForMovie(Movie movie, String apiKey) {
+        return apiService.getVideosForMovie(movie.getId(), apiKey);
+    }
+
     /**
      * Api interface for retrofit
      */
@@ -68,6 +74,10 @@ public class TMDBApi {
         @Headers("Accept: application/json")
         @GET("discover/movie")
         Call<MovieList> discoverMovies(@Query("sort_by") String sortOrder, @Query("api_key") String apiKey);
+
+        @Headers("Accept: application/json")
+        @GET("movie/{id}/videos")
+        Call<VideoList> getVideosForMovie(@Path("id") long id, @Query("api_key") String apiKey);
     }
 
 }

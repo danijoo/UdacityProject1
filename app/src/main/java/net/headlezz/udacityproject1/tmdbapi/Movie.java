@@ -16,6 +16,8 @@ public class Movie implements Parcelable {
     // empty constructor for gson/retrofit
     public Movie() {}
 
+    long id;
+
     String title;
 
     @SerializedName("poster_path")
@@ -49,6 +51,10 @@ public class Movie implements Parcelable {
         return releaseDate;
     }
 
+    public long getId() {
+        return id;
+    }
+
     /**** Parcelable stuff *****/
 
     @Override
@@ -63,6 +69,7 @@ public class Movie implements Parcelable {
         dest.writeString(overview);
         dest.writeDouble(avRating);
         dest.writeLong(releaseDate.getTime());
+        dest.writeLong(id);
     }
 
     public static final Parcelable.Creator<Movie> CREATOR = new Parcelable.Creator<Movie>() {
@@ -81,6 +88,7 @@ public class Movie implements Parcelable {
         overview = src.readString();
         avRating = src.readDouble();
         releaseDate = new Date(src.readLong());
+        id = src.readLong();
     }
 
 
