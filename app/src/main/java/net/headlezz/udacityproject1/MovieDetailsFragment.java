@@ -10,6 +10,9 @@ import android.support.v4.app.Fragment;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -65,6 +68,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if(getArguments().containsKey(BUNDLE_ARG_MOVIE)) {
             mMovie = getArguments().getParcelable(BUNDLE_ARG_MOVIE);
             Log.d(TAG, "Bundled movie: " + mMovie.getTitle());
@@ -154,6 +158,38 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
             }
         } else {
             trailerHolder.getChildAt(0).setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.movie_details_menu, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if(item.getItemId() == R.id.action_share) {
+            shareTrailer();
+            return true;
+        }
+        else
+            return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Fires an intent to share the trailer url of this movie
+     * Code from http://www.techrepublic.com/blog/software-engineer/get-social-using-android-intents-to-share-a-link/
+     */
+    private void shareTrailer() {
+        if(mVideoList == null || mVideoList.getVideos().size() == 0)
+            Toast.makeText(getActivity(), "Nothing to share. :(", Toast.LENGTH_SHORT).show();
+        else {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            i.putExtra(Intent.EXTRA_TEXT, "https://youtu.be/" + mVideoList.getVideos().get(0).getKey());
+            i.putExtra(Intent.EXTRA_SUBJECT, "Check out this movie!");
+            startActivity(Intent.createChooser(i, "Share"));
         }
     }
 
