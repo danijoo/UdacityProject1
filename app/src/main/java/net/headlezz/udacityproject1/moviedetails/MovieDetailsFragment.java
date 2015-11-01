@@ -126,13 +126,14 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
             mVideoList = response.body();
             if(getActivity() != null)
                 showVideoList(mVideoList);
+        } else {
+            trailerHolder.getChildAt(0).setVisibility(View.VISIBLE);
         }
     }
 
     @Override
     public void onFailure(Throwable t) {
-        if(getActivity() != null)
-            Toast.makeText(getActivity(), "Failed to load videos: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+        trailerHolder.getChildAt(0).setVisibility(View.VISIBLE);
     }
 
     @OnClick(R.id.movie_details_btReviews)
@@ -173,6 +174,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     private void showVideoList(@NonNull VideoList videoList) {
         List<Video> videos = videoList.getVideos();
         if(videos.size() > 0) {
+            trailerHolder.getChildAt(0).setVisibility(View.GONE);
             for (Video video : videoList.getVideos()) {
                 View view = LayoutInflater.from(getActivity()).inflate(R.layout.movie_details_trailer_item, trailerHolder, false);
                 TextView tv = (TextView) view.findViewById(R.id.trailer_item_tvName);
