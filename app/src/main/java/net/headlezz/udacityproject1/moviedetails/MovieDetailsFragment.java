@@ -81,7 +81,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
         if(getArguments().containsKey(BUNDLE_ARG_MOVIE)) {
             mMovie = getArguments().getParcelable(BUNDLE_ARG_MOVIE);
             Log.d(TAG, "Bundled movie: " + mMovie.getTitle());
-            isFavorite = mProvderHelper.isFavorite(mMovie); // TODO async?
+            isFavorite = mProvderHelper.isFavorite(mMovie);
         } else
             throw new RuntimeException(TAG + " opened without bundled movie!");
 
@@ -134,8 +134,6 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
         if(getActivity() != null)
             Toast.makeText(getActivity(), "Failed to load videos: " + t.getMessage(), Toast.LENGTH_SHORT).show();
     }
-
-    // TODO high res image for video link
 
     @OnClick(R.id.movie_details_btReviews)
     public void onReviewButtonClick(View view) {
@@ -226,7 +224,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     /**
      * removes or adds the movie to stored favorites
      */
-    private void switchFavorite() { // TODO async?
+    private void switchFavorite() {
         if(isFavorite)
             mProvderHelper.removeFavorite(mMovie);
         else

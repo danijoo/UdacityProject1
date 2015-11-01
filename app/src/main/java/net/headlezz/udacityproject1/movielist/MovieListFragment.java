@@ -166,7 +166,6 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     }
 
     private void loadMovieListFromFavorites() {
-        // TODO async?
         mMovieList = null;
         Cursor cursor = new FavoriteProviderHelper(getContext().getContentResolver()).getAllFavorites();
         mMovieGridView.setAdapter(new CursorMovieListAdapter(cursor, (MovieNavigation) getActivity()));
