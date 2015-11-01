@@ -6,6 +6,9 @@ import android.database.Cursor;
 
 import net.headlezz.udacityproject1.tmdbapi.Movie;
 
+/**
+ * Helper class for accessing the Favorite database
+ */
 public class FavoriteProviderHelper {
 
     private ContentResolver mResolver;
