@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     private static final int NUM_COLUMNS_LAND = 5;
     /**
      * The currently selected sorting order of the list
+     *
      * @see TMDBApi
      */
     private int mSortingOrder = SORT_ORDER_MOST_POPULAR;
@@ -54,8 +56,10 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
 
     private MovieList mMovieList;
 
-    @Bind(R.id.movie_list_grid) RecyclerView mMovieGridView;
-    @Bind(R.id.movie_list_progressBar) ProgressBar mProgressBar;
+    @Bind(R.id.movie_list_grid)
+    RecyclerView mMovieGridView;
+    @Bind(R.id.movie_list_progressBar)
+    ProgressBar mProgressBar;
 
     /**
      * Holding a reference to running api calls. This makes it possible to cancel them if
@@ -80,12 +84,15 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mMovieGridView.setLayoutManager(new GridLayoutManager(getActivity(), getNumColumns()));
+        if (savedInstanceState != null)
+            restoreState(savedInstanceState);
+    }
 
-        if(savedInstanceState != null) {
-            mSortingOrder = savedInstanceState.getInt("sort_order");
-            if(savedInstanceState.containsKey("movielist"))
-                mMovieList = savedInstanceState.getParcelable("movielist");
-        }
+    private void restoreState(@NonNull Bundle savedInstanceState) {
+        mSortingOrder = savedInstanceState.getInt("sort_order");
+        if (savedInstanceState.containsKey("movielist"))
+            mMovieList = savedInstanceState.getParcelable("movielist");
+
     }
 
     /**
@@ -94,7 +101,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      */
     private int getNumColumns() {
         int orientation = getActivity().getResources().getConfiguration().orientation;
-        if(orientation == Configuration.ORIENTATION_LANDSCAPE)
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE)
             return NUM_COLUMNS_LAND;
         else
             return NUM_COLUMNS_PORTRAIT;
@@ -112,10 +119,10 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      * starts the download of the new movie list if no restored one is present
      */
     private void initMovieList() {
-        if(mMovieList == null)
+        if (mMovieList == null)
             loadMovieList();
         else
-            mMovieGridView.setAdapter(new MovieListAdapter( (MovieNavigation) getActivity(), mMovieList));
+            mMovieGridView.setAdapter(new MovieListAdapter((MovieNavigation) getActivity(), mMovieList));
     }
 
     @Override
@@ -150,7 +157,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      */
     private void loadMovieList() {
         stopLoadingMovies(); // stop any running query before starting a new one
-        if(mSortingOrder != SORT_ORDER_FAVORITES) {
+        if (mSortingOrder != SORT_ORDER_FAVORITES) {
             mProgressBar.setVisibility(View.VISIBLE);
             mMovieListCall = TMDBApi.discoverMovies(mSortingOrder, getString(R.string.api_key));
             mMovieListCall.enqueue(this);
@@ -160,13 +167,14 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
 
     private void loadMovieListFromFavorites() {
         // TODO async?
+        mMovieList = null;
         Cursor cursor = new FavoriteProviderHelper(getContext().getContentResolver()).getAllFavorites();
-        mMovieGridView.setAdapter(new CursorMovieListAdapter(cursor,(MovieNavigation) getActivity()));
+        mMovieGridView.setAdapter(new CursorMovieListAdapter(cursor, (MovieNavigation) getActivity()));
     }
 
     @Override
     public void onResponse(Response<MovieList> response, Retrofit retrofit) {
-        if(response.isSuccess()) {
+        if (response.isSuccess()) {
             mMovieList = response.body();
             setListToGrid(mMovieList);
         }
@@ -177,7 +185,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     public void onFailure(Throwable t) {
         Log.d(TAG, t.getClass().getSimpleName() + " " + t.getMessage());
         mProgressBar.setVisibility(View.GONE);
-        if(!t.getMessage().equals("Canceled") && getActivity() != null)
+        if (!t.getMessage().equals("Canceled") && getActivity() != null)
             Toast.makeText(getActivity(), t.getMessage(), Toast.LENGTH_SHORT).show();
     }
 
@@ -189,7 +197,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      * Stops the current api query
      */
     private void stopLoadingMovies() {
-        if(mMovieListCall != null) {
+        if (mMovieListCall != null) {
             mMovieListCall.cancel();
             mMovieListCall = null;
         }
@@ -204,14 +212,14 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(!(context instanceof MovieNavigation))
+        if (!(context instanceof MovieNavigation))
             throw new RuntimeException("Activity must implement " + MovieNavigation.class.getSimpleName());
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("sort_order", mSortingOrder);
-        if(mMovieList != null && mSortingOrder != SORT_ORDER_FAVORITES)
+        if (mMovieList != null && mSortingOrder != SORT_ORDER_FAVORITES)
             outState.putParcelable("movielist", mMovieList);
         super.onSaveInstanceState(outState);
     }
