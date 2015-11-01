@@ -5,26 +5,22 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.widget.TextView;
 
 import net.headlezz.udacityproject1.movielist.MovieListFragment;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Main activity is mainly for handling fragment transactions
  */
 public class MainActivity extends AppCompatActivity implements MovieNavigation, FragmentManager.OnBackStackChangedListener {
 
-    @Bind(R.id.main_details_placeHolderText) TextView detailsPlaceholderView;
+    View detailsPlaceholderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+        detailsPlaceholderView = findViewById(R.id.main_details_placeHolderText);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.app_name));
