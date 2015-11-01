@@ -1,4 +1,4 @@
-package net.headlezz.udacityproject1;
+package net.headlezz.udacityproject1.moviedetails;
 
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.headlezz.udacityproject1.R;
 import net.headlezz.udacityproject1.favorites.FavoriteProviderHelper;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
 import net.headlezz.udacityproject1.tmdbapi.ReviewList;
@@ -138,28 +139,32 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
 
     @OnClick(R.id.movie_details_btReviews)
     public void onReviewButtonClick(View view) {
-        // TODO progressdialogs are bad because of rotation
         final ProgressDialog dialog = new ProgressDialog(getContext());
         dialog.setIndeterminate(true);
+        dialog.setMessage(getString(R.string.movie_download_review_progress));
         dialog.show();
         TMDBApi.getReviewsForMovie(mMovie, getString(R.string.api_key)).enqueue(new Callback<ReviewList>() {
             @Override
             public void onResponse(Response<ReviewList> response, Retrofit retrofit) {
-                dialog.dismiss();
-                if(response.isSuccess()) {
+                if(response.body().getReviews().size() == 0)
+                    Toast.makeText(getContext(), R.string.movie_download_review_not_found, Toast.LENGTH_SHORT).show();
+                else {
                     ReviewDialogFragment frag = ReviewDialogFragment.newInstance(response.body());
                     frag.show(getChildFragmentManager(), ReviewDialogFragment.TAG);
-                } else {
-                    Log.e(TAG, "Query not successful.");
                 }
+                if(dialog.isShowing())
+                    dialog.dismiss();
             }
 
             @Override
             public void onFailure(Throwable t) {
-                dialog.dismiss();
-                Log.e(TAG, "something went wrong: " + t.getMessage());
+                if(dialog.isShowing())
+                    dialog.dismiss();
+                Toast.makeText(getContext(), R.string.movie_download_review_fail, Toast.LENGTH_SHORT).show();
             }
         });
+
+
     }
 
     /**
@@ -184,7 +189,7 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
                         try {
                             startActivity(intent);
                         } catch (ActivityNotFoundException e) {
-                            Toast.makeText(getActivity(), "Youtube app not found.", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), R.string.movie_share_fail, Toast.LENGTH_SHORT).show();
                         }
 
                     }
@@ -235,12 +240,12 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
      */
     private void shareTrailer() {
         if(mVideoList == null || mVideoList.getVideos().size() == 0)
-            Toast.makeText(getActivity(), "Nothing to share. :(", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.movie_share_no_trailer_found, Toast.LENGTH_SHORT).show();
         else {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("text/plain");
             i.putExtra(Intent.EXTRA_TEXT, "https://youtu.be/" + mVideoList.getVideos().get(0).getKey());
-            i.putExtra(Intent.EXTRA_SUBJECT, "Check out this movie!");
+            i.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.movie_share_title));
             startActivity(Intent.createChooser(i, "Share"));
         }
     }

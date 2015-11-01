@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import net.headlezz.udacityproject1.moviedetails.MovieDetailsFragment;
 import net.headlezz.udacityproject1.movielist.MovieListFragment;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
 

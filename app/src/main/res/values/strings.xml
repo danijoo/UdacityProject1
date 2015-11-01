@@ -10,4 +10,10 @@
     <string name="list_action_favorites">Favorites</string>
     <string name="details_no_movies_found">No videos found.</string>
     <string name="details_frag_placeholder_text">Please select a movie</string>
+    <string name="movie_download_review_progress">Downloading...</string>
+    <string name="movie_download_review_not_found">No reviews found</string>
+    <string name="movie_download_review_fail">Review download failed.</string>
+    <string name="movie_share_fail">Youtube app not found.</string>
+    <string name="movie_share_no_trailer_found">Nothing to share. :(</string>
+    <string name="movie_share_title">Check out this movie!</string>
 </resources>
