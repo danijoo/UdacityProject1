@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:id="@+id/imageView"
-        android:src="@drawable/ic_action_movie" />
+        android:src="@drawable/filmstrip" />
     <TextView
         android:id="@+id/trailer_item_tvName"
         android:layout_marginLeft="16dp"
