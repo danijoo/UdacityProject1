@@ -8,6 +8,6 @@
     <string name="list_action_popular">Popular movies</string>
     <string name="list_action_rating">Highest av. rating</string>
     <string name="list_action_favorites">Favorites</string>
-    <string name="movie_details_no_movies_found">No videos found.</string>
+    <string name="details_no_movies_found">No videos found.</string>
     <string name="details_frag_placeholder_text">Please select a movie</string>
 </resources>
