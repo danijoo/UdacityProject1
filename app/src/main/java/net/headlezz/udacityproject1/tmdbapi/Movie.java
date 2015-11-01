@@ -82,7 +82,7 @@ public class Movie implements Parcelable {
         dest.writeString(posterPath);
         dest.writeString(overview);
         dest.writeDouble(avRating);
-        dest.writeLong(releaseDate.getTime());
+        dest.writeLong( (releaseDate == null) ? -1 : releaseDate.getTime());
         dest.writeLong(id);
     }
 
@@ -101,7 +101,9 @@ public class Movie implements Parcelable {
         posterPath = src.readString();
         overview = src.readString();
         avRating = src.readDouble();
-        releaseDate = new Date(src.readLong());
+        long dateTime = src.readLong();
+        if(dateTime != -1)
+            releaseDate = new Date(dateTime);
         id = src.readLong();
     }
 
