@@ -6,6 +6,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.squareup.picasso.Picasso;
 
+import net.headlezz.udacityproject1.R;
+
 import retrofit.Call;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -48,7 +50,7 @@ public class TMDBApi {
     }
 
     public static void loadPoster(ImageView imageView, Movie movie) {
-        Picasso.with(imageView.getContext()).load(IMAGE_BASE_URL + movie.getPosterPath()).into(imageView);
+        Picasso.with(imageView.getContext()).load(IMAGE_BASE_URL + movie.getPosterPath()).error(R.drawable.poster_notfound).into(imageView);
     }
 
     public static Call<MovieList> discoverMovies(int sortOrder, String apiKey) {
