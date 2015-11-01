@@ -4,19 +4,27 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.TextView;
 
 import net.headlezz.udacityproject1.movielist.MovieListFragment;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Main activity is mainly for handling fragment transactions
  */
 public class MainActivity extends AppCompatActivity implements MovieNavigation, FragmentManager.OnBackStackChangedListener {
 
+    @Bind(R.id.main_details_placeHolderText) TextView detailsPlaceholderView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         setTitle(getString(R.string.app_name));
@@ -38,8 +46,11 @@ public class MainActivity extends AppCompatActivity implements MovieNavigation, 
      */
     public void showDetailsFragment(Movie movie) {
         MovieDetailsFragment frag = MovieDetailsFragment.newInstance(movie);
+        int holderId = getResources().getBoolean(R.bool.master_detail) ? R.id.fragmentHolderDetails : R.id.fragmentHolder;
+        if(detailsPlaceholderView != null)
+            detailsPlaceholderView.setVisibility(View.GONE);
         getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragmentHolder, frag)
+                .replace(holderId, frag)
                 .addToBackStack(MovieDetailsFragment.TAG)
                 .commit();
     }
