@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import net.headlezz.udacityproject1.favorites.FavoriteProviderHelper;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 import net.headlezz.udacityproject1.tmdbapi.Video;
@@ -51,6 +52,9 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     Movie mMovie;
     VideoList mVideoList;
 
+    FavoriteProviderHelper mProvderHelper;
+    boolean isFavorite;
+
     /**
      * Hold a reference to the videolist download call so
      * it can be canceled when stopping
@@ -69,9 +73,11 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        mProvderHelper = new FavoriteProviderHelper(getContext().getContentResolver());
         if(getArguments().containsKey(BUNDLE_ARG_MOVIE)) {
             mMovie = getArguments().getParcelable(BUNDLE_ARG_MOVIE);
             Log.d(TAG, "Bundled movie: " + mMovie.getTitle());
+            isFavorite = mProvderHelper.isFavorite(mMovie); // TODO async?
         } else
             throw new RuntimeException(TAG + " opened without bundled movie!");
 
@@ -165,6 +171,8 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.movie_details_menu, menu);
+        MenuItem favItem = menu.findItem(R.id.action_favorite);
+        favItem.setIcon(isFavorite ? R.drawable.ic_action_star_10 : R.drawable.ic_action_star_0);
     }
 
     @Override
@@ -172,9 +180,24 @@ public class MovieDetailsFragment extends Fragment implements Callback<VideoList
         if(item.getItemId() == R.id.action_share) {
             shareTrailer();
             return true;
+        } else if(item.getItemId() == R.id.action_favorite) {
+            switchFavorite();
+            item.setIcon(isFavorite ? R.drawable.ic_action_star_10 : R.drawable.ic_action_star_0);
+            return true;
         }
         else
             return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * removes or adds the movie to stored favorites
+     */
+    private void switchFavorite() { // TODO async?
+        if(isFavorite)
+            mProvderHelper.removeFavorite(mMovie);
+        else
+            mProvderHelper.addFavorite(mMovie);
+        isFavorite = !isFavorite;
     }
 
     /**

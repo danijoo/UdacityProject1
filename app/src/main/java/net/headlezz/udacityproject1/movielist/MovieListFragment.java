@@ -1,7 +1,8 @@
-package net.headlezz.udacityproject1;
+package net.headlezz.udacityproject1.movielist;
 
 import android.content.Context;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,6 +17,9 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import net.headlezz.udacityproject1.MovieNavigation;
+import net.headlezz.udacityproject1.R;
+import net.headlezz.udacityproject1.favorites.FavoriteProviderHelper;
 import net.headlezz.udacityproject1.tmdbapi.MovieList;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
@@ -42,7 +46,11 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      * The currently selected sorting order of the list
      * @see TMDBApi
      */
-    private int mSortingOrder = TMDBApi.SORT_ORDER_MOST_POPULAR;
+    private int mSortingOrder = SORT_ORDER_MOST_POPULAR;
+
+    public static final int SORT_ORDER_MOST_POPULAR = TMDBApi.SORT_ORDER_MOST_POPULAR;
+    public static final int SORT_ORDER_HIGHEST_RATED = TMDBApi.SORT_ORDER_HIGHEST_RATED;
+    public static final int SORT_ORDER_FAVORITES = 3;
 
     private MovieList mMovieList;
 
@@ -120,11 +128,15 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sort_popularity:
-                mSortingOrder = TMDBApi.SORT_ORDER_MOST_POPULAR;
+                mSortingOrder = SORT_ORDER_MOST_POPULAR;
                 loadMovieList();
                 return true;
             case R.id.action_sort_rating:
-                mSortingOrder = TMDBApi.SORT_ORDER_HIGHEST_RATED;
+                mSortingOrder = SORT_ORDER_HIGHEST_RATED;
+                loadMovieList();
+                return true;
+            case R.id.action_sort_favorites:
+                mSortingOrder = SORT_ORDER_FAVORITES;
                 loadMovieList();
                 return true;
             default:
@@ -138,9 +150,18 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
      */
     private void loadMovieList() {
         stopLoadingMovies(); // stop any running query before starting a new one
-        mProgressBar.setVisibility(View.VISIBLE);
-        mMovieListCall = TMDBApi.discoverMovies(mSortingOrder, getString(R.string.api_key));
-        mMovieListCall.enqueue(this);
+        if(mSortingOrder != SORT_ORDER_FAVORITES) {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mMovieListCall = TMDBApi.discoverMovies(mSortingOrder, getString(R.string.api_key));
+            mMovieListCall.enqueue(this);
+        } else
+            loadMovieListFromFavorites();
+    }
+
+    private void loadMovieListFromFavorites() {
+        // TODO async?
+        Cursor cursor = new FavoriteProviderHelper(getContext().getContentResolver()).getAllFavorites();
+        mMovieGridView.setAdapter(new CursorMovieListAdapter(cursor,(MovieNavigation) getActivity()));
     }
 
     @Override
@@ -190,7 +211,7 @@ public class MovieListFragment extends Fragment implements Callback<MovieList> {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putInt("sort_order", mSortingOrder);
-        if(mMovieList != null)
+        if(mMovieList != null && mSortingOrder != SORT_ORDER_FAVORITES)
             outState.putParcelable("movielist", mMovieList);
         super.onSaveInstanceState(outState);
     }

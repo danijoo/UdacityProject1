@@ -1,9 +1,12 @@
 package net.headlezz.udacityproject1.tmdbapi;
 
+import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
+
+import net.headlezz.udacityproject1.favorites.FavoriteColumns;
 
 import java.util.Date;
 
@@ -53,6 +56,17 @@ public class Movie implements Parcelable {
 
     public long getId() {
         return id;
+    }
+
+    public static Movie fromCurrentCursorPosition(Cursor cursor) {
+        Movie movie = new Movie();
+        movie.id = cursor.getLong(cursor.getColumnIndex(FavoriteColumns._ID));
+        movie.title = cursor.getString(cursor.getColumnIndex(FavoriteColumns.TITLE));
+        movie.posterPath = cursor.getString(cursor.getColumnIndex(FavoriteColumns.POSTERPATH));
+        movie.overview = cursor.getString(cursor.getColumnIndex(FavoriteColumns.OVERVIEW));
+        movie.releaseDate = new Date(cursor.getLong(cursor.getColumnIndex(FavoriteColumns.RELEASEDATE)));
+        movie.avRating = cursor.getDouble(cursor.getColumnIndex(FavoriteColumns.AVRATING));
+        return movie;
     }
 
     /**** Parcelable stuff *****/

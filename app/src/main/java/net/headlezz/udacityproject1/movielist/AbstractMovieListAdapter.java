@@ -1,4 +1,4 @@
-package net.headlezz.udacityproject1;
+package net.headlezz.udacityproject1.movielist;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,20 +6,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import net.headlezz.udacityproject1.MovieNavigation;
+import net.headlezz.udacityproject1.R;
 import net.headlezz.udacityproject1.tmdbapi.Movie;
-import net.headlezz.udacityproject1.tmdbapi.MovieList;
 import net.headlezz.udacityproject1.tmdbapi.TMDBApi;
 
-import java.util.List;
-
-public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.MovieViewHolder>{
+/**
+ * Abstract class for shwoing a list of movie posters
+ */
+public abstract class AbstractMovieListAdapter extends RecyclerView.Adapter<AbstractMovieListAdapter.MovieViewHolder> {
 
     MovieNavigation mMovieNavigation;
-    List<Movie> mMovies;
 
-    public MovieListAdapter(MovieNavigation mn, MovieList movieList) {
+    public AbstractMovieListAdapter(MovieNavigation mn) {
         mMovieNavigation = mn;
-        mMovies = movieList.getList();
     }
 
     @Override
@@ -30,13 +30,14 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
 
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
-        holder.setMovie(mMovies.get(position));
+        holder.setMovie(getMovieForPosition(position));
     }
 
-    @Override
-    public int getItemCount() {
-        return mMovies.size();
-    }
+    /**
+     * @param position of the list
+     * @return the movie displayed for the given position
+     */
+    protected abstract Movie getMovieForPosition(int position);
 
     /**
      * Viewholder for the movie items
@@ -62,5 +63,4 @@ public class MovieListAdapter extends RecyclerView.Adapter<MovieListAdapter.Movi
             TMDBApi.loadPoster(ivPoster, movie);
         }
     }
-
 }

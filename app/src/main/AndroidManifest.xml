@@ -20,6 +20,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <provider
+            android:authorities="net.headlezz.udacityproject1.FavoriteProvider"
+            android:name="net.headlezz.udacityproject1.provider.FavoriteProvider"
+            android:exported="false" />
     </application>
 
 </manifest>
