@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
-    <item android:id="@+id/action_sort_popularity" android:title="Popular movies" app:showAsAction="never" />
-    <item android:id="@+id/action_sort_rating" android:title="Highest av. rating" app:showAsAction="never" />
-    <item android:id="@+id/action_sort_favorites" android:title="Favorites" app:showAsAction="never" />
+    <item android:id="@+id/action_sort_popularity" android:title="@string/list_action_popular" app:showAsAction="never" />
+    <item android:id="@+id/action_sort_rating" android:title="@string/list_action_rating" app:showAsAction="never" />
+    <item android:id="@+id/action_sort_favorites" android:title="@string/list_action_favorites" app:showAsAction="never" />
 </menu>

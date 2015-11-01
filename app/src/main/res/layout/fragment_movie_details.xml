@@ -77,7 +77,7 @@
 
             <TextView
                 android:visibility="gone"
-                android:text="No videos found."
+                android:text="@string/movie_details_no_movies_found"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 

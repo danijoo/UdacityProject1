@@ -34,9 +34,10 @@ public class FavoriteProviderHelper {
         String selection = FavoriteColumns.TITLE + "=?";
         String[] selectionArgs = new String[]{movie.getTitle()};
         Cursor cursor = mResolver.query(FavoriteProvider.Favorites.FAVORITES_URI, projection, selection, selectionArgs, null);
-        if (cursor != null && cursor.getCount() > 0)
-            return true;
-        return false;
+        boolean isFavourite = (cursor != null && cursor.getCount() > 0)
+        if(cursor != null)
+            cursor.close();
+        return isFavourite;
     }
 
     public void addFavorite(Movie movie) {
